@@ -121,4 +121,4 @@ if run:
         st.error(f"Error: {e}")
 
 st.markdown("---")
-st.caption("Developed by Dr Fernando Freua. Copyright 2025")
+st.caption("App Developed by Dr Fernando Freua and AI Prompt by Dr Thiago Guimarães. Copyright 2025")
