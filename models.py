@@ -1,7 +1,10 @@
 from typing import Any, Dict
 
-# JSON Schema for strict Structured Outputs in OpenAI.
-# IMPORTANT: `additionalProperties` must be False at the root and every object node.
+# JSON Schema for OpenAI Structured Outputs (Chat Completions).
+# Requirements:
+# - additionalProperties: False at root and every object
+# - required must include EVERY key in properties for each object (strict mode)
+# - We'll keep everything required, and instruct the model to output "unknown" when not reported.
 
 def ExtractionSchema() -> Dict[str, Any]:
     raise NotImplementedError("Use ExtractionSchema.json_schema()")
@@ -21,7 +24,13 @@ def _schema_dict() -> Dict[str, Any]:
                     "number_of_controls": {"type": ["integer", "string"]},
                     "country": {"type": "string"}
                 },
-                "required": ["study", "design"]
+                "required": [
+                    "study",
+                    "design",
+                    "number_of_patients",
+                    "number_of_controls",
+                    "country"
+                ]
             },
             "patient_demographics": {
                 "type": "object",
@@ -34,7 +43,14 @@ def _schema_dict() -> Dict[str, Any]:
                     "family_history": {"type": "string"},
                     "parental_consanguinity": {"type": "string"}
                 },
-                "required": []
+                "required": [
+                    "current_age",
+                    "age_at_onset",
+                    "age_at_treatment_initiation",
+                    "sex",
+                    "family_history",
+                    "parental_consanguinity"
+                ]
             },
             "intervention_and_duration": {
                 "type": "object",
@@ -43,7 +59,10 @@ def _schema_dict() -> Dict[str, Any]:
                     "intervention": {"type": "string"},
                     "duration_or_replacement_time": {"type": "string"}
                 },
-                "required": []
+                "required": [
+                    "intervention",
+                    "duration_or_replacement_time"
+                ]
             },
             "outcomes": {
                 "type": "object",
@@ -53,7 +72,11 @@ def _schema_dict() -> Dict[str, Any]:
                     "is_primary_outcome": {"type": "string"},
                     "result_magnitude_significance": {"type": "string"}
                 },
-                "required": []
+                "required": [
+                    "motor_outcome",
+                    "is_primary_outcome",
+                    "result_magnitude_significance"
+                ]
             },
             "diagnostic_and_imaging_tests": {
                 "type": "object",
@@ -69,7 +92,17 @@ def _schema_dict() -> Dict[str, Any]:
                     "electroneuromyography": {"type": "string"},
                     "electroencephalogram": {"type": "string"}
                 },
-                "required": []
+                "required": [
+                    "molecular",
+                    "specific_biochemical_test",
+                    "biochemical_test_after_treatment",
+                    "general_relevant_blood_test",
+                    "brain_ct",
+                    "brain_mri",
+                    "spinal_mri",
+                    "electroneuromyography",
+                    "electroencephalogram"
+                ]
             },
             "clinical_features": {
                 "type": "object",
@@ -103,7 +136,35 @@ def _schema_dict() -> Dict[str, Any]:
                     "orthopedic": {"type": "string"},
                     "other_important_information": {"type": "string"}
                 },
-                "required": []
+                "required": [
+                    "developmental_history",
+                    "cognitive_impairment",
+                    "neuropsychiatric",
+                    "epileptic_seizures",
+                    "movement_disorders",
+                    "cerebellar_ataxia",
+                    "sensory_ataxia",
+                    "muscle_strength",
+                    "pyramidal_signs",
+                    "sensory_symptoms",
+                    "static_balance",
+                    "gait",
+                    "wheelchair_bound",
+                    "visual_disturbances",
+                    "hearing_impairment",
+                    "eye_movements",
+                    "dysarthria",
+                    "vertigo",
+                    "ovr",
+                    "dysphagia",
+                    "skin",
+                    "gastrointestinal",
+                    "endocrinological",
+                    "cardiac",
+                    "genitourinary",
+                    "orthopedic",
+                    "other_important_information"
+                ]
             },
             "methodological_quality": {
                 "type": "object",
@@ -126,7 +187,24 @@ def _schema_dict() -> Dict[str, Any]:
                     "publication_bias": {"type": "string"},
                     "other_considerations": {"type": "string"}
                 },
-                "required": []
+                "required": [
+                    "adherence_to_protocol",
+                    "itt_analysis",
+                    "missing_patient_data_over_10_20_percent",
+                    "randomization_bias",
+                    "protocol_deviations",
+                    "missing_outcomes",
+                    "measurement_bias",
+                    "selective_reporting_of_outcomes",
+                    "representative_population",
+                    "representative_intervention",
+                    "representative_outcomes",
+                    "conflicts_of_interest",
+                    "risk_of_bias_and_limitations",
+                    "indirect_evidence",
+                    "publication_bias",
+                    "other_considerations"
+                ]
             },
             "evidence_frameworks": {
                 "type": "object",
@@ -137,11 +215,26 @@ def _schema_dict() -> Dict[str, Any]:
                     "prisma_flow_or_criteria": {"type": "string"},
                     "cochrane_risk_of_bias": {"type": "string"}
                 },
-                "required": []
+                "required": [
+                    "grade_system",
+                    "pico",
+                    "prisma_flow_or_criteria",
+                    "cochrane_risk_of_bias"
+                ]
             },
             "study_summary": {"type": "string"}
         },
-        "required": ["study_information", "study_summary"]
+        "required": [
+            "study_information",
+            "patient_demographics",
+            "intervention_and_duration",
+            "outcomes",
+            "diagnostic_and_imaging_tests",
+            "clinical_features",
+            "methodological_quality",
+            "evidence_frameworks",
+            "study_summary"
+        ]
     }
 
 class ExtractionSchema:
