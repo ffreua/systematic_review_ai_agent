@@ -81,6 +81,7 @@ if run:
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
                 system=system_prompt,
+                input=user_prompt,
                 input=[{"role": "user", "content": user_prompt}],
                 response_format={
                     "type": "json_schema",
