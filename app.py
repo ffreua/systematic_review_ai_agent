@@ -1,11 +1,7 @@
 import os
 import json
-import io
 from typing import Any, Dict
 import streamlit as st
-
-# Text/PDF handling
-from pypdf import PdfReader
 
 # OpenAI (>=1.40) new SDK
 from openai import OpenAI
@@ -67,22 +63,22 @@ if run:
         # Initialize OpenAI client
         client = OpenAI(api_key=api_key)
 
-        # Build prompts
+        # Prepare text and prompts
+        text_for_model = chunk_text(article_text)
         system_prompt = build_system_prompt(force_english=force_english, allow_unknown=allow_unknown)
-        user_prompt = build_user_prompt(article_text)
+        user_prompt = build_user_prompt(text_for_model)
 
-        # JSON schema for tool-free structured output
+        # JSON schema for strict structured output
         schema = ExtractionSchema.json_schema()
 
-        # Call Responses API with JSON schema output
+        # Call Responses API with JSON schema output (IMPORTANT: use `instructions`, not `system`)
         with st.spinner("Querying the model..."):
             response = client.responses.create(
                 model=default_model,
+                instructions=system_prompt,
+                input=user_prompt,
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
-                system=system_prompt,
-                input=user_prompt,
-               # input=[{"role": "user", "content": user_prompt}],
                 response_format={
                     "type": "json_schema",
                     "json_schema": {
@@ -93,30 +89,17 @@ if run:
                 }
             )
 
-        # Pull structured JSON from output
-        # The responses API returns output in response.output
-        content = None
-        if response.output and len(response.output) > 0:
-            # Find the first "output_text" item which should be our JSON string
-            for item in response.output:
-                if item.type == "output_text":
-                    content = item.content[0].text
-                    break
+        # Get structured JSON string
+        content = getattr(response, "output_text", None)
 
-        if content is None:
+        if not content:
             st.error("No structured output returned from the model.")
         else:
             try:
                 data = json.loads(content)
             except Exception:
-                # Some models return JSON with backticks; try to clean
                 cleaned = content.strip().strip("`")
-                try:
-                    data = json.loads(cleaned)
-                except Exception as e:
-                    st.code(content)
-                    st.error(f"Could not parse JSON: {e}")
-                    st.stop()
+                data = json.loads(cleaned)
 
             st.success("Extraction complete!")
             st.subheader("Result (structured)")
