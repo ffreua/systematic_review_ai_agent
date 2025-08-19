@@ -1,7 +1,7 @@
 from typing import Any, Dict
 
-# We keep schema construction in plain dict form so it works without pydantic dependency.
-# This schema exactly mirrors the requested fields.
+# JSON Schema for strict Structured Outputs in OpenAI.
+# IMPORTANT: `additionalProperties` must be False at the root and every object node.
 
 def ExtractionSchema() -> Dict[str, Any]:
     raise NotImplementedError("Use ExtractionSchema.json_schema()")
@@ -9,9 +9,11 @@ def ExtractionSchema() -> Dict[str, Any]:
 def _schema_dict() -> Dict[str, Any]:
     return {
         "type": "object",
+        "additionalProperties": False,
         "properties": {
             "study_information": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "study": {"type": "string", "description": "Author(s) and year of publication"},
                     "design": {"type": "string"},
@@ -23,6 +25,7 @@ def _schema_dict() -> Dict[str, Any]:
             },
             "patient_demographics": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "current_age": {"type": "string"},
                     "age_at_onset": {"type": "string"},
@@ -35,6 +38,7 @@ def _schema_dict() -> Dict[str, Any]:
             },
             "intervention_and_duration": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "intervention": {"type": "string"},
                     "duration_or_replacement_time": {"type": "string"}
@@ -43,6 +47,7 @@ def _schema_dict() -> Dict[str, Any]:
             },
             "outcomes": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "motor_outcome": {"type": "string"},
                     "is_primary_outcome": {"type": "string"},
@@ -52,6 +57,7 @@ def _schema_dict() -> Dict[str, Any]:
             },
             "diagnostic_and_imaging_tests": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "molecular": {"type": "string"},
                     "specific_biochemical_test": {"type": "string"},
@@ -67,6 +73,7 @@ def _schema_dict() -> Dict[str, Any]:
             },
             "clinical_features": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "developmental_history": {"type": "string"},
                     "cognitive_impairment": {"type": "string"},
@@ -100,6 +107,7 @@ def _schema_dict() -> Dict[str, Any]:
             },
             "methodological_quality": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "adherence_to_protocol": {"type": "string"},
                     "itt_analysis": {"type": "string"},
@@ -122,6 +130,7 @@ def _schema_dict() -> Dict[str, Any]:
             },
             "evidence_frameworks": {
                 "type": "object",
+                "additionalProperties": False,
                 "properties": {
                     "grade_system": {"type": "string"},
                     "pico": {"type": "string"},
