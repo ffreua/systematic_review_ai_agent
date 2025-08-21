@@ -149,6 +149,7 @@ def _schema_dict() -> Dict[str, Any]:
                     "sensory_symptoms",
                     "static_balance",
                     "gait",
+                    "cough",
                     "wheelchair_bound",
                     "visual_disturbances",
                     "hearing_impairment",
